@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const db = require('./db')
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -7,12 +8,15 @@ app.use(express.urlencoded({extended: true}))
 app.set("view engine", "hbs")
 
 app.get('/', (req, res) => {
-    res.render('persons', {
-        persons: [
-            {name: 'Abc', age: 22, city: 'Bhobal'},
-            {name: 'Cde', age: 15, city: 'MP'}
-        ]
-    })
+
+    db.getAllPersons()
+        .then((persons) => {
+            res.render('persons', {persons})
+        })
+        .catch((err) => {
+            res.send(err)
+        })
+
 })
 
 app.get('/add', (req, res) => {
